@@ -1,30 +1,74 @@
-"""在 430 例 CT 上训练 DPT(UNet 分割 + 点/MLP 重建分支)
+"""
+Train DPT (UNet segmentation + point/MLP reconstruction branch) on 430 CT cases.
 
-用法：
+Usage:
     nohup python one_encoder_40140/entire_image_train.py \
-  --gpu 1 --epochs 500 --sample-num 2048 --save-every 50 &
+      --gpu 1 --epochs 500 --sample-num 2048 --save-every 50 &
 
-(需要改的参数：--image-dir/--label-dir/--save-dir/--gpu/--epochs/--sample-num/--save-every/--val-count/--val-every,其他保持默认)
+Parameters that may need to be changed:
+    --image-dir / --label-dir / --save-dir / --gpu / --epochs /
+    --sample-num / --save-every / --val-count / --val-every
+    (Keep all other parameters at their default values.)
+
     python one_encoder_40140/entire_image_train.py
 
-默认值：(可以直接改 DEFAULT_IMAGE_DIR / DEFAULT_LABEL_DIR,图像和标签的准备在)
-    图像   --image-dir /data/zhongjuntao/Model_Data/Model/SAM-Med3D-main/visualization/images
-    标签   --label-dir /data/zhongjuntao/Model_Data/Model/SAM-Med3D-main/visualization/label_sam_430_255    (430 例, 同名配对)
-    保存   --save-dir result/train400_epoch500                (目录和日志自动创建)
-    划分   train=400 / val=30 (--val-count 30, seed 0)，每 --val-every 验证一次
-            --val-count = 从总数据里预留出来做验证集的病例数
+Default settings:
+    (You can directly modify DEFAULT_IMAGE_DIR / DEFAULT_LABEL_DIR.)
 
-输入：图像与标签同名 .nii.gz 一一配对，标签 ∈ {0,1,2,3,255}(255=忽略,loss 中跳过)
-输出：--save-dir 下
-      model_best_mean_dice.pth   验证集 mean Dice 最高的权重
-      model_epoch_{N}.pth        每 --save-every 个 epoch 保存一次
-      train_nohup.log            日志（脚本自动写，命令里不需要再加 `>` 重定向）
+    Images:
+        --image-dir /data/zhongjuntao/Model_Data/Model/SAM-Med3D-main/visualization/images
 
-常用：
-    跑训练(500 epoch)  python one_encoder_40140/entire_image_train.py --gpu 1 --epochs 500 --sample-num 2048 --save-every 50
-    续训               python one_encoder_40140/entire_image_train.py --gpu 1 --checkpoint result/train400_epoch500/model_epoch_100.pth
-    只检查数据         python one_encoder_40140/entire_image_train.py --validate-only
-    冒烟测试(跑几步)   python one_encoder_40140/entire_image_train.py --max-steps 2
+    Labels:
+        --label-dir /data/zhongjuntao/Model_Data/Model/SAM-Med3D-main/visualization/label_sam_430_255
+        (430 cases, paired with images by identical filenames)
+
+    Save directory:
+        --save-dir result/train400_epoch500
+        (The directory and log file will be created automatically.)
+
+    Dataset split:
+        train = 400 / val = 30
+        (--val-count 30, seed 0)
+
+        Validation is performed every --val-every epochs.
+
+        --val-count specifies the number of cases reserved from the
+        full dataset as the validation set.
+
+Input:
+    Images and labels are paired one-to-one using identical .nii.gz filenames.
+    Label values are in {0, 1, 2, 3, 255}.
+    Label 255 is ignored and excluded from loss computation.
+
+Output:
+    Files saved under --save-dir:
+
+    model_best_mean_dice.pth
+        Model weights with the highest mean Dice score on the validation set.
+
+    model_epoch_{N}.pth
+        Model checkpoint saved every --save-every epochs.
+
+    train_nohup.log
+        Training log automatically written by the script.
+        No additional `>` redirection is required in the command.
+
+Common commands:
+
+    Train for 500 epochs:
+        python one_encoder_40140/entire_image_train.py \
+          --gpu 1 --epochs 500 --sample-num 2048 --save-every 50
+
+    Resume training:
+        python one_encoder_40140/entire_image_train.py \
+          --gpu 1 \
+          --checkpoint result/train400_epoch500/model_epoch_100.pth
+
+    Validate/check data only:
+        python one_encoder_40140/entire_image_train.py --validate-only
+
+    Smoke test (run only a few steps):
+        python one_encoder_40140/entire_image_train.py --max-steps 2
 """
 
 import argparse
