@@ -1,21 +1,39 @@
-# 使用说明
+# Usage
 
-DPT 模型：**UNet 分支**（256×256×128）做 CT 分割 + **点/MLP 重建分支**（512×512×256），分割目标为左心室心肌/血池/右心室。
-环境：`Python 3.8。
+## Model
 
-## 核心文件
+DPT model consisting of:
 
-| 文件 | 作用 |
-| `entire_image_train.py` | 训练（详细用法见脚本） |
-| `entire_image_test.py` |测试集推理 + Dice（详细用法见脚本） |
-| `Model/model_copy.py` | 模型定义 |
+- **UNet branch** (256×256×128) for CT segmentation
+- **Point/MLP reconstruction branch** (512×512×256) for high-resolution reconstruction
+
+The segmentation targets include the **left ventricular myocardium, left ventricular blood pool, and right ventricle**.
+
+**Environment:** Python 3.8
 
 
-## 结果
+## Core Files
 
-- `result/ckpt/model_best_mean_dice.pth`：
-验证集 mean Dice **0.9343**（class_1=0.8755 / class_2=0.9608 / class_3=0.9665）
-- `result/test/`：最终保留了相关结果的可视化（`images/`、`label_GT/`、`label_pred/` + `dice.json`）
+| File | Description |
+| --- | --- |
+| `entire_image_train.py` | Model training (see the script for detailed usage) |
+| `entire_image_test.py` | Test-set inference and Dice evaluation (see the script for detailed usage) |
+| `Model/model_copy.py` | Model definition |
+
+
+## Results
+
+- `result/ckpt/model_best_mean_dice.pth`  
+  Best validation checkpoint with a **mean Dice score of 0.9343**  
+  (class_1 = 0.8755 / class_2 = 0.9608 / class_3 = 0.9665)
+
+- `result/test/`  
+  Contains visualizations of the segmentation results:
+  - `images/`
+  - `label_GT/`
+  - `label_pred/`
+  - `dice.json`
+
 
 ## Citation
 @article{lin2026adversarial,
