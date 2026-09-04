@@ -3,12 +3,26 @@ import torch
 import random
 
 def sample_coords(label,ignore_label=255,sample_num=None,sample_ignore=False):
-    '''
-    :param label:点标签，要从里面挑选出标记的样本，可能是前景，也可能是背景 ,batch*x*y*z
-    :param sample_num: 采样点个数,如果是None，那就采样最少标记点的样本的点个数，如果指定了，那就和最少样本点的样本点个数进行对比，如果小于，则按照指定的个数采样，否则就按照最小样本点采样
-    ignore_label:没有标注的点的标记
-    :return:
-    '''
+'''
+:param label:
+    Point labels used to select annotated samples. The labeled points
+    may belong to either the foreground or the background.
+    Shape: batch * x * y * z.
+
+:param sample_num:
+    Number of points to sample.
+    If None, the number of sampled points is determined by the sample
+    with the fewest labeled points.
+    If specified, sample_num is compared with the minimum number of
+    labeled points among all samples. If sample_num is smaller, the
+    specified number of points is sampled; otherwise, the minimum
+    number of labeled points is used.
+
+:param ignore_label:
+    Label value used for unlabeled points.
+
+:return:
+'''
     batch_coords_list = []#batch_size,N,3
     for sample in label:
         sample=sample[0]
