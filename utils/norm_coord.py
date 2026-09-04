@@ -1,15 +1,20 @@
 import torch
 
 def make_coord(shape, ranges=None, flatten=True):
-    """ 生成中心化坐标
-    ranged in [-1, 1]
-    e.g.
-    shape:图像的大小，例如[512,512,256]
-    例如第一维是2，那第一维的坐标就会变成[-0.5,0.5]
-        shape = [2] get (-0.5, 0.5)
-        shape = [3] get (-0.67, 0, 0.67)
-    """
-    coord_seqs = []#用于收集不同维度的归一化坐标
+"""
+Generate centered coordinates in the range [-1, 1].
+
+Args:
+    shape: Image dimensions, e.g., [512, 512, 256].
+
+For example, if the size of the first dimension is 2,
+the coordinates along that dimension will be [-0.5, 0.5].
+
+Examples:
+    shape = [2] -> (-0.5, 0.5)
+    shape = [3] -> (-0.67, 0, 0.67)
+"""
+    coord_seqs = []
     for i, n in enumerate(shape):
         if ranges is None:
             v0, v1 = -1, 1
