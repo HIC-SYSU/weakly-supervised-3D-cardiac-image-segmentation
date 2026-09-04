@@ -1,22 +1,53 @@
-"""147 例济南 2016.10 CT 上运行 UNet 分支推理并计算 Dice。
+"""
+Run inference using the UNet branch on 147 Jinan CT cases from October 2016
+and compute Dice scores.
 
-用法：
+Usage:
     python one_encoder_40140/entire_image_test.py
 
-默认值：(可以直接改DEFAULT_IMAGE_DIR——DEFAULT_OUTPUT_DIR几个参数)
-    图像输入    --image-dir /data/zhongjuntao/ALL_Data/2016.10            (这个有147例)
-    GT         --gt-dir /data/zhongjuntao/ALL_Data/label_jinan/2016.10_147已完成
-    权重       --checkpoint result/train400_epoch500/model_best_mean_dice.pth
-    输出       --output-dir result/test_147_train400_bestepoch160
+Default settings:
+    (You can directly modify the parameters from DEFAULT_IMAGE_DIR
+    to DEFAULT_OUTPUT_DIR.)
 
-输入：图像与 GT 同名 .nii.gz 一一配对,GT 标签 ∈ {0,1,2,3}。
-输出：每例 {case}_pred.nii.gz(还原到原图空间的 uint8 预测)
-      以及 dice.json(逐例 class_1/2/3/mean_dice + 汇总包括最好的那例和平均dice)。
+    Image input:
+        --image-dir /data/zhongjuntao/ALL_Data/2016.10
+        (147 cases)
 
-其他参数用法：
-    单例      python one_encoder_40140/entire_image_test.py --case aixinghui
-    前 N 例   python one_encoder_40140/entire_image_test.py --limit 5
-    覆盖重跑  python one_encoder_40140/entire_image_test.py --overwrite
+    Ground truth (GT):
+        --gt-dir /data/zhongjuntao/ALL_Data/label_jinan/2016.10_147已完成
+
+    Checkpoint:
+        --checkpoint result/train400_epoch500/model_best_mean_dice.pth
+
+    Output directory:
+        --output-dir result/test_147_train400_bestepoch160
+
+Input:
+    Images and ground-truth (GT) labels are paired one-to-one using
+    identical .nii.gz filenames.
+    GT label values are in {0, 1, 2, 3}.
+
+Output:
+    For each case:
+        {case}_pred.nii.gz
+            uint8 prediction restored to the original image space.
+
+    Summary file:
+        dice.json
+            Contains class_1, class_2, class_3, and mean_dice for each case,
+            together with summary statistics including the best-performing
+            case and the overall average Dice score.
+
+Additional options:
+
+    Run a single case:
+        python one_encoder_40140/entire_image_test.py --case aixinghui
+
+    Run the first N cases:
+        python one_encoder_40140/entire_image_test.py --limit 5
+
+    Overwrite existing results and rerun:
+        python one_encoder_40140/entire_image_test.py --overwrite
 """
 
 import argparse
